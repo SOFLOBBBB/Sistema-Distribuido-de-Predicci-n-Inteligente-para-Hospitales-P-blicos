@@ -1,0 +1,92 @@
+# ===========================================
+# S.D.P.I. Project - Git Ignore
+# ===========================================
+
+# Dependencies
+node_modules/
+__pycache__/
+*.pyc
+.pyo
+.pyd
+*.egg-info/
+dist/
+build/
+eggs/
+*.egg
+.eggs/
+
+# Environment files
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+*.local
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# OS
+.DS_Store
+.DS_Store?
+._*
+Thumbs.db
+ehthumbs.db
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+lerna-debug.log*
+
+# Testing
+coverage/
+.nyc_output/
+.pytest_cache/
+htmlcov/
+
+# Build outputs
+dist/
+build/
+out/
+*.js.map
+
+# Python virtual environments
+venv/
+ENV/
+env/
+.venv/
+
+# ML Models (generated, can be large)
+*.joblib
+*.pkl
+*.h5
+*.model
+ml-service/app/models/*.joblib
+
+# Jupyter Notebooks checkpoints
+.ipynb_checkpoints/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Docker
+*.tar
+
+# Database
+*.db
+*.sqlite
+*.sqlite3
+

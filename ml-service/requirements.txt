@@ -1,0 +1,25 @@
+# S.D.P.I. ML Service Dependencies
+# [MODULE 4]: Machine Learning and Data Science stack
+
+# Web framework
+fastapi==0.104.1
+uvicorn[standard]==0.24.0
+pydantic==2.5.2
+pydantic-settings==2.1.0
+
+# Machine Learning [MODULE 4]
+scikit-learn==1.3.2
+numpy==1.26.2
+pandas==2.1.3
+joblib==1.3.2
+
+# Data validation
+python-multipart==0.0.6
+
+# Utilities
+python-dotenv==1.0.0
+
+# Development
+httpx==0.25.2
+pytest==7.4.3
+

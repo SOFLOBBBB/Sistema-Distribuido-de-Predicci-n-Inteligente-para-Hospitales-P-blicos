@@ -1,0 +1,142 @@
+# =============================================================================
+# S.D.P.I. - Docker Compose Configuration
+# Sistema Distribuido de Predicción Inteligente para Hospitales Públicos
+# =============================================================================
+#
+# [MODULE 3]: Distributed System Architecture
+# This configuration demonstrates the distributed nature of the system:
+# - Each service runs in its own container
+# - Services communicate via defined networks
+# - Database is isolated from external access
+#
+# Usage:
+#   docker-compose up -d          # Start all services
+#   docker-compose logs -f        # View logs
+#   docker-compose down           # Stop all services
+#
+# Author: Sofía Castellanos Lobo
+# =============================================================================
+
+version: '3.8'
+
+services:
+  # ===========================================================================
+  # PostgreSQL Database
+  # [MODULE 2]: Relational Database for data persistence
+  # ===========================================================================
+  postgres:
+    image: postgres:15-alpine
+    container_name: sdpi-postgres
+    environment:
+      POSTGRES_USER: sdpi_user
+      POSTGRES_PASSWORD: sdpi_secure_password_2024
+      POSTGRES_DB: sdpi_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./init-db.sql:/docker-entrypoint-initdb.d/init.sql
+    networks:
+      - sdpi-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U sdpi_user -d sdpi_db"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  # ===========================================================================
+  # Backend API (NestJS)
+  # [MODULE 2]: Business logic and REST API
+  # [MODULE 3]: Central orchestration service
+  # ===========================================================================
+  backend-api:
+    build:
+      context: ../backend-api
+      dockerfile: Dockerfile
+    container_name: sdpi-backend
+    environment:
+      NODE_ENV: production
+      PORT: 3000
+      DB_HOST: postgres
+      DB_PORT: 5432
+      DB_USERNAME: sdpi_user
+      DB_PASSWORD: sdpi_secure_password_2024
+      DB_DATABASE: sdpi_db
+      JWT_SECRET: your_production_jwt_secret_change_this
+      JWT_EXPIRATION: 24h
+      ML_SERVICE_URL: http://ml-service:8000
+      ML_SERVICE_TIMEOUT: 30000
+      CORS_ORIGINS: http://localhost:5173,http://localhost:3001
+    ports:
+      - "3000:3000"
+    depends_on:
+      postgres:
+        condition: service_healthy
+      ml-service:
+        condition: service_started
+    networks:
+      - sdpi-network
+    restart: unless-stopped
+
+  # ===========================================================================
+  # ML Service (FastAPI + Python)
+  # [MODULE 3]: Separate microservice for ML processing
+  # [MODULE 4]: Machine Learning inference
+  # ===========================================================================
+  ml-service:
+    build:
+      context: ../ml-service
+      dockerfile: Dockerfile
+    container_name: sdpi-ml-service
+    environment:
+      PYTHONUNBUFFERED: 1
+    ports:
+      - "8000:8000"
+    volumes:
+      - ml_models:/app/models
+    networks:
+      - sdpi-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+    restart: unless-stopped
+
+  # ===========================================================================
+  # Frontend (React + Vite) - Production Build
+  # [MODULE 2]: User Interface
+  # ===========================================================================
+  frontend:
+    build:
+      context: ../frontend-app
+      dockerfile: Dockerfile
+    container_name: sdpi-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      - backend-api
+    networks:
+      - sdpi-network
+    restart: unless-stopped
+
+# =============================================================================
+# Networks
+# [MODULE 3]: Internal network for service communication
+# =============================================================================
+networks:
+  sdpi-network:
+    driver: bridge
+    name: sdpi-network
+
+# =============================================================================
+# Volumes
+# [MODULE 2]: Persistent data storage
+# =============================================================================
+volumes:
+  postgres_data:
+    name: sdpi-postgres-data
+  ml_models:
+    name: sdpi-ml-models
+
