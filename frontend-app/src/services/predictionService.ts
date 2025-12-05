@@ -117,3 +117,4 @@ export const predictionService = {
 
 export default predictionService;
 
+

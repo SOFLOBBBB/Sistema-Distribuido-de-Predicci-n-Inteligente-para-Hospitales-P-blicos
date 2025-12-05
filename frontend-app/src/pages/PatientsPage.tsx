@@ -554,3 +554,4 @@ const PatientsPage: React.FC = () => {
 
 export default PatientsPage;
 
+

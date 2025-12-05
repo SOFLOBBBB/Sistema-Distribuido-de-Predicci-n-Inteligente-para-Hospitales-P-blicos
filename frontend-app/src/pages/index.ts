@@ -11,3 +11,4 @@ export { default as PatientDetailPage } from './PatientDetailPage';
 export { default as PredictionsPage } from './PredictionsPage';
 export { default as NewPredictionPage } from './NewPredictionPage';
 
+

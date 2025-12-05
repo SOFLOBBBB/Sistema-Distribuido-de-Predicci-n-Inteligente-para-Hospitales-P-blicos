@@ -457,3 +457,4 @@ const PatientDetailPage: React.FC = () => {
 
 export default PatientDetailPage;
 
+

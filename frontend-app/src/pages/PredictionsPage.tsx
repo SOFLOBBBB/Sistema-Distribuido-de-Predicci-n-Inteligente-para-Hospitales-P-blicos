@@ -400,3 +400,4 @@ const PredictionsPage: React.FC = () => {
 
 export default PredictionsPage;
 
+

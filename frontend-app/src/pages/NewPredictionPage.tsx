@@ -571,3 +571,4 @@ const NewPredictionPage: React.FC = () => {
 
 export default NewPredictionPage;
 
+
